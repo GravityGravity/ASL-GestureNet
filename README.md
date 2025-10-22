@@ -21,6 +21,8 @@ We will evaluate our trained models using separate validation and testing datase
 
 #### Library Requirements + Purpose
 
+Requirements.txt contains all library requirements to run this project
+
 - Pandas: Extracting CSV file information
 - MediaPipe (By google): 3D/2D hand tracking points 
 - Torch/TorchVision: Training models and creating datasets/dataset loaders
