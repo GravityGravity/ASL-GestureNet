@@ -16,3 +16,11 @@ Through this approach, we aim to build a model capable of identifying both emoti
 
 ### Model Evaluation
 We will evaluate our trained models using separate validation and testing datasets to measure performance and generalization. The validation dataset will be used during training to fine-tune model parameters and prevent overfitting, while the testing dataset will provide an unbiased assessment of the model’s accuracy and reliability. Evaluation metrics such as precision, recall, F1-score, and mean squared error on keypoint detection will be used to assess how effectively the model recognizes and matches hand positions and facial expressions across unseen images.
+
+
+
+#### Library Requirements + Purpose
+
+- Pandas: Extracting CSV file information
+- MediaPipe (By google): 3D/2D hand tracking points 
+- Torch/TorchVision: Training models and creating datasets/dataset loaders
