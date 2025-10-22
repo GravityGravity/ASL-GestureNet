@@ -1,0 +1,5 @@
+pip install numpy
+pip install cv2
+pip install torch
+pip install torchvision
+pip install pandas
