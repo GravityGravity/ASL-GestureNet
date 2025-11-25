@@ -1,6 +1,6 @@
-pip install numpy
-pip install cv2
-pip install torch
-pip install torchvision
-pip install pandas
-pip install mediapipe
+numpy
+cv2
+torch
+torchvision
+pandas
+mediapipe
