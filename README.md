@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://via.placeholder.com/900x200.png?text=ASL-GestureNet" alt="ASL-GestureNet Banner">
+  <img src="\figures\banner.jpg" alt="ASL-GestureNet Banner">
 </p>
 
 # ✋ ASL-GestureNet
