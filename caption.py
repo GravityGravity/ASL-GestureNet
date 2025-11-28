@@ -63,7 +63,7 @@ def clear_cap():
 # Title Related Functions
 
 
-def write_title(img: np.ndarray, TL_rect_pt: tuple[int, int], color: tuple[int, int, int]):
+def write_title(img: np.ndarray, TL_rect_pt: tuple[int, int], color: tuple[int, int, int]) -> np.ndarray:
     global title
     if title:
         x_cord, y_cord = TL_rect_pt
@@ -120,7 +120,7 @@ def box_pad(pt_min: tuple[int, int], pt_max: tuple[int, int], scale: float = 1.1
     return ((new_x_min, new_y_min), (new_x_max, new_y_max))
 
 
-def check_OOB(pt: tuple[int, int], H: int, W: int):
+def check_OOB(pt: tuple[int, int], H: int, W: int) -> tuple:
     """
     Check if X,Y cords are outside of bounds W x H
     """

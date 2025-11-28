@@ -19,6 +19,13 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 hand = mp_hands.Hands(max_num_hands=1)  # Single Hand Tracking
 
+
+def frame_process(is_left: bool):
+    if not is_left:
+        pass
+    pass
+
+
 if not cap.isOpened():
     print("Error: Could not open video stream or file")
 else:
@@ -69,6 +76,12 @@ else:
                     hand_bbox_color = (0, 255, 0)
                     cv.rectangle(frame, hand_bbox_min,
                                  hand_bbox_max, (0, 255, 0), 2)
+
+                # Process frame
+                if result.multi_handedness[0].classification[0].label == 'Left':
+                    frame_process(is_left=True)
+                if result.multi_handedness[0].classification[0].label == 'Left':
+                    frame_process(is_left=False)
 
             # Write Caption on frame
             frame = write_cap(frame, frame.shape[1], frame.shape[0])
