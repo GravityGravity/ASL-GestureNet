@@ -63,10 +63,13 @@ def clear_cap():
 # Title Related Functions
 
 
-def write_title(img: np.ndarray, TL_rect_pt: tuple[int, int], color: tuple[int, int, int]) -> np.ndarray:
+def write_title(img: np.ndarray, TL_rect_min: tuple[int, int], TL_rect_max: tuple[int, int], asl_char: str = 'random') -> np.ndarray:
     global title
     if title:
-        x_cord, y_cord = TL_rect_pt
+
+        color = set_title(asl_char)
+
+        x_cord, y_cord = TL_rect_min
         # Title Text openCV parameters
         font_size = 0.75
         font_thick = 2
@@ -82,6 +85,10 @@ def write_title(img: np.ndarray, TL_rect_pt: tuple[int, int], color: tuple[int, 
         TB_min = (x_cord, (y_cord - text_H - baseline * 2))
         TB_max = ((x_cord + text_W + (margin * 2)), (y_cord))
 
+        # Draw Hand Bbox
+        cv.rectangle(img, TL_rect_min,
+                     TL_rect_max, color, 2)
+
         # Draw title background
         img = cv.rectangle(img, TB_min, TB_max, color, -1)
 
@@ -90,8 +97,129 @@ def write_title(img: np.ndarray, TL_rect_pt: tuple[int, int], color: tuple[int, 
         return img
 
 
-def set_title():
+def set_title(label: str) -> tuple:
     global title
+    print(label)
+    label = label.lower()
+
+    match label:
+        # -------- DIGITS 0–9 --------
+        case "0":
+            title = "0"
+            return (255, 0, 0)
+        case "1":
+            title = "1"
+            return (255, 128, 0)
+        case "2":
+            title = "2"
+            return (255, 255, 0)
+        case "3":
+            title = "3"
+            return (128, 255, 0)
+        case "4":
+            title = "4"
+            return (0, 255, 0)
+        case "5":
+            title = "5"
+            return (0, 255, 128)
+        case "6":
+            title = "6"
+            return (0, 255, 255)
+        case "7":
+            title = "7"
+            return (0, 128, 255)
+        case "8":
+            title = "8"
+            return (0, 0, 255)
+        case "9":
+            title = "9"
+            return (128, 0, 255)
+
+        # -------- LETTERS a–z --------
+        case "a":
+            title = "A"
+            return (5, 91, 219)
+        case "b":
+            title = "B"
+            return (0, 128, 255)
+        case "c":
+            title = "C"
+            return (0, 191, 255)
+        case "d":
+            title = "D"
+            return (0, 255, 255)
+        case "e":
+            title = "E"
+            return (0, 255, 191)
+        case "f":
+            title = "F"
+            return (0, 255, 128)
+        case "g":
+            title = "G"
+            return (0, 255, 64)
+        case "h":
+            title = "H"
+            return (64, 255, 0)
+        case "i":
+            title = "I"
+            return (128, 255, 0)
+        case "j":
+            title = "J"
+            return (191, 255, 0)
+        case "k":
+            title = "K"
+            return (255, 255, 0)
+        case "l":
+            title = "L"
+            return (255, 191, 0)
+        case "m":
+            title = "M"
+            return (255, 128, 0)
+        case "n":
+            title = "N"
+            return (255, 64, 0)
+        case "o":
+            title = "O"
+            return (255, 0, 0)
+        case "p":
+            title = "P"
+            return (255, 0, 64)
+        case "q":
+            title = "Q"
+            return (255, 0, 128)
+        case "r":
+            title = "R"
+            return (255, 0, 191)
+        case "s":
+            title = "S"
+            return (255, 0, 255)
+        case "t":
+            title = "T"
+            return (191, 0, 255)
+        case "u":
+            title = "U"
+            return (128, 0, 255)
+        case "v":
+            title = "V"
+            return (64, 0, 255)
+        case "w":
+            title = "W"
+            return (0, 0, 255)
+        case "x":
+            title = "X"
+            return (0, 64, 255)
+        case "y":
+            title = "Y"
+            return (0, 128, 255)
+        case "z":
+            title = "Z"
+            return (0, 191, 255)
+
+        # -------- FALLBACK --------
+        case _:
+            title = "?"
+            return (128, 128, 128)
+
     pass
 
 # Adds padding to bounding boxes (Hand Bbox, Caption Bbox)

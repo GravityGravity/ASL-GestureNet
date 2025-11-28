@@ -19,6 +19,9 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 hand = mp_hands.Hands(max_num_hands=1)  # Single Hand Tracking
 
+# Global char set
+asl_char = '?'
+
 
 def frame_process(is_left: bool):
     if not is_left:
@@ -69,30 +72,35 @@ else:
                     mp_drawing.draw_landmarks(
                         frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-                    # Write Hand Box Title
-                    frame = write_title(frame, hand_bbox_min, hand_bbox_color)
-
-                    # Write Hand Bounding Box
-                    hand_bbox_color = (0, 255, 0)
-                    cv.rectangle(frame, hand_bbox_min,
-                                 hand_bbox_max, (0, 255, 0), 2)
+                    # Write Hand Box Title and Hand Bbox
+                    frame = write_title(
+                        frame, hand_bbox_min, hand_bbox_max, asl_char)
 
                 # Process frame
                 if result.multi_handedness[0].classification[0].label == 'Left':
                     frame_process(is_left=True)
-                if result.multi_handedness[0].classification[0].label == 'Left':
+                if result.multi_handedness[0].classification[0].label == 'Right':
                     frame_process(is_left=False)
 
             # Write Caption on frame
             frame = write_cap(frame, frame.shape[1], frame.shape[0])
             cv.imshow('Live Video Feed', frame)  # Display the frame
 
-            key = cv.waitKey(1) & 0xFF
+            key = cv.waitKey(10) & 0xFF
 
             # Clear bottom caption on 'X' button press
             if key == ord('x'):
                 clear_cap()
-
+            if key == ord('a'):
+                asl_char = 'a'
+            if key == ord('b'):
+                asl_char = 'b'
+            if key == ord('c'):
+                asl_char = 'c'
+            if key == ord('d'):
+                asl_char = 'd'
+            if key == ord('e'):
+                asl_char = 'e'
             # Record a frame on 'r' button press
             if key == ord('r'):  # record a frame hotkey
                 cv.imwrite(frame, ())  # DEBUG/ BUG
