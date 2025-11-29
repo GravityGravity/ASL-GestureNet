@@ -1,7 +1,16 @@
 # File: dataset_ann.py
 #
 # DESC: Grabs a dataset folder location and runs each image through mediapipe hand keypoint analysis, and writes all keypoints into a ASL_ann.csv file
-
+#
+#
+#   POTENTIAL FEATURE LIST:
+#       - Add keypoint error checking for hand keypoints that are completely messed up
+#       - Add Z computation for Hand Keypoint (KP) analysis
+#
+#
+#
+#
+#
 
 import os
 import sys
