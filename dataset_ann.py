@@ -21,6 +21,8 @@ import pandas as pd
 import mediapipe as mp
 import cv2 as cv
 
+from process import normalize_scale_KP, upright_KP
+
 print()
 csv_fieldsnames = ['image_id', 'image_h', 'image_w', 'label', 'WRIST', 'THUMB_CMC', 'THUMB_MCP', 'THUMB_IP', 'THUMB_TIP', 'INDEX_FINGER_MCP', 'INDEX_FINGER_PIP', 'INDEX_FINGER_DIP', 'INDEX_FINGER_TIP', 'MIDDLE_FINGER_MCP',
                    'MIDDLE_FINGER_PIP', 'MIDDLE_FINGER_DIP', 'MIDDLE_FINGER_TIP', 'RING_FINGER_MCP', 'RING_FINGER_PIP', 'RING_FINGER_DIP', 'RING_FINGER_TIP', 'PINKY_MCP', 'PINKY_PIP', 'PINKY_DIP', 'PINKY_TIP']
@@ -58,23 +60,37 @@ def loop_dir(iter_print: int = None):
     for i, img_path in enumerate(data_dir.rglob('*.jpeg', case_sensitive=False)):
         print(img_path.name)
         if not ((i+i_init) % iter_print):
-            keypoint_extract(img_path, display_hand=True)
+            keypoint_extract(img_path, center_scale=True,
+                             normal_angle=True, display_hand=True)
         else:
-            keypoint_extract(img_path)
+            keypoint_extract(img_path, center_scale=True,
+                             normal_angle=True, display_hand=False)
         jpeg_count += 1
         img_count += 1
 
     print(f'\njpeg_count: {jpeg_count}')  # debug
 
-    for img_path in data_dir.rglob('*.jpg', case_sensitive=False):
-        print(img_path)
+    for i, img_path in enumerate(data_dir.rglob('*.jpg', case_sensitive=False)):
+        print(img_path.name)
+        if not ((i+i_init) % iter_print):
+            keypoint_extract(img_path, center_scale=True,
+                             normal_angle=True, display_hand=True)
+        else:
+            keypoint_extract(img_path, center_scale=True,
+                             normal_angle=True, display_hand=False)
         jpg_count += 1
         img_count += 1
 
     print(f'\njpg_count: {jpg_count}')  # debug
 
-    for img_path in data_dir.rglob('*.png', case_sensitive=False):
+    for i, img_path in enumerate(data_dir.rglob('*.png', case_sensitive=False)):
         print(img_path.name)
+        if not ((i+i_init) % iter_print):
+            keypoint_extract(img_path, center_scale=True,
+                             normal_angle=True, display_hand=True)
+        else:
+            keypoint_extract(img_path, center_scale=True,
+                             normal_angle=True, display_hand=False)
         png_count += 1
         img_count += 1
 
@@ -94,7 +110,7 @@ def write_csv(annotations: list[str]):
     return False
 
 
-def keypoint_extract(img_path: Path, normalize: bool = True, display_hand: bool = False) -> list:
+def keypoint_extract(img_path: Path, normalize: bool = True, center_scale: bool = False, normal_angle: bool = False, display_hand: bool = False) -> list:
 
     global unreadable_imgs
     img_name = img_path.name
@@ -115,6 +131,14 @@ def keypoint_extract(img_path: Path, normalize: bool = True, display_hand: bool 
             cords = (lm.x, lm.y)
             img_info.append(cords)
 
+        if center_scale:
+            img_info[4:25] = normalize_scale_KP(img_info[4:25])
+            if img_info[4] == 999:
+                return False
+
+        if normal_angle:
+            img_info[4:25] = upright_KP(img_info[4:25])
+
         if display_hand:
             mp_drawing.draw_landmarks(
                 img, singlehand, mp_hands.HAND_CONNECTIONS)
@@ -124,6 +148,7 @@ def keypoint_extract(img_path: Path, normalize: bool = True, display_hand: bool 
 
             if key == ord('q'):
                 sys.exit(1)
+
         write_csv(img_info)
 
     else:

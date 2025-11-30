@@ -70,12 +70,15 @@ def write_title(img: np.ndarray, TL_rect_min: tuple[int, int], TL_rect_max: tupl
         color = set_title(asl_char)
 
         x_cord, y_cord = TL_rect_min
+
         # Title Text openCV parameters
         font_size = 0.75
         font_thick = 2
         font_face = cv.FONT_HERSHEY_SIMPLEX
         font_color = (255, 255, 255)  # white
         margin = 20
+
+        # Title Location
 
         # Title Size
         (text_W, text_H), baseline = cv.getTextSize(
