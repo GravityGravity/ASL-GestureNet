@@ -21,11 +21,13 @@ import cv2 as cv
 
 from process import normalize_scale_KP, upright_KP
 
+dataset_type = input('  >Is this for \'train\' or \'test\'?\n   >')
+dataset_folder = input('  >What is dataset folder name?\n   >')
+csv_name = input('  >What csv name would you like?\n   >')
+
 print()
 csv_fieldnames = [
     "image_id",
-    "image_h",
-    "image_w",
     "label",
     "WRIST",
     "THUMB_CMC",
@@ -51,7 +53,7 @@ csv_fieldnames = [
 ]
 
 # Dataset directory
-data_dir = Path.cwd() / "datasets" / "train" / "asl_dataset"
+data_dir = Path.cwd() / "datasets" / dataset_type / dataset_folder
 if not data_dir.exists():
     raise FileNotFoundError(f"{data_dir} does not exist")
 print(data_dir)  # debug
@@ -131,12 +133,12 @@ def loop_dir(iter_print: int) -> bool:
     print(f"\n  -> total_img_count: {img_count}")  # debug
 
     # Write annotations to CSV
-    ann_csv.to_csv("asl_dataset.csv", index=False)
+    ann_csv.to_csv(csv_name, index=False)
 
     return True
 
 
-def write_csv(annotations: list) -> None:
+def append_csv(annotations: list) -> None:
     """Append a new annotation row to the CSV DataFrame."""
     global ann_csv
     ann_csv.loc[len(ann_csv)] = annotations
@@ -160,9 +162,8 @@ def keypoint_extract(
         return False
 
     label = img_path.parent.name
-    H, W = img.shape[0], img.shape[1]
 
-    img_info = [img_name, H, W, label]
+    img_info = [img_name, label]
 
     RGB_img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     result = hand.process(RGB_img)
@@ -177,14 +178,15 @@ def keypoint_extract(
 
         # Center and scale relative to wrist / middle MCP
         if center_scale:
-            img_info[4:25] = normalize_scale_KP(img_info[4:25])
+            img_info[2:23] = normalize_scale_KP(img_info[2:23])
             # Sentinel check: first keypoint is [999.0, 999.0] on failure
-            if isinstance(img_info[4], (list, tuple)) and img_info[4][0] == 999.0:
+            if img_info[2][0] == 999.0:
+                print('   \n\n FOUND BAD DATASET!!!!!!!!')
                 return False
 
         # Rotate so middle finger is upright
         if normal_angle:
-            img_info[4:25] = upright_KP(img_info[4:25])
+            img_info[2:23] = upright_KP(img_info[2:23])
 
         # Optional visualization
         if display_hand:
@@ -198,7 +200,7 @@ def keypoint_extract(
             if key == ord("q"):
                 sys.exit(1)
 
-        write_csv(img_info)
+        append_csv(img_info)
 
     else:
         # No hand detected
@@ -210,11 +212,6 @@ def keypoint_extract(
         unreadable_imgs += 1
 
     return True
-
-
-def KP_process() -> None:
-    """Placeholder for extra keypoint processing."""
-    pass
 
 
 if __name__ == "__main__":

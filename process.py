@@ -22,6 +22,11 @@ def frame_process(
 ) -> list[list[float]]:
     """Process raw hand keypoints into cropped, normalized, upright coordinates."""
 
+    # Ensure we have 21 keypoints
+    if len(keypoints) != 21:
+        raise IndexError(
+            f"\nprocess.py: frame_process() keypoint list length != 21 (len: {len(keypoints)})\n"
+        )
     # Convert input keypoints to numpy array
     kp_array = np.asarray(keypoints, dtype=np.float32)
 
@@ -66,15 +71,14 @@ def frame_process(
     # Rotate keypoints so middle MCP is vertical
     kp_new_list = upright_KP(kp_new_list)
 
-    print(kp_new_list)  # debug
+    # print(kp_new_list)  # debug
 
     # Optionally display the hand crop
     if display_hand_seg:
         if not is_left:
-            print("         NOT LEFT")
             img = hand_invert(img)  # horizontally flip the image
 
-        print((y_min, y_max, x_min, x_max))
+        # print((y_min, y_max, x_min, x_max)) # Debug
         img = img[y_min:y_max + 1, x_min:x_max + 1]  # crop image
         cv.imshow("hand_segment", img)
 
@@ -92,13 +96,13 @@ def upright_KP(keypoints: list[tuple[float, float]]) -> list[list[float]]:
     # Type check input container
     if not isinstance(keypoints, list):
         raise TypeError(
-            f"process.py: UPRIGHT_KP() type not taken {type(keypoints)}"
+            f"\nprocess.py: UPRIGHT_KP() type not taken {type(keypoints)}\n"
         )
 
     # Ensure we have 21 keypoints
     if len(keypoints) != 21:
         raise IndexError(
-            f"process.py: UPRIGHT_KP() keypoint list length != 21 (len: {len(keypoints)})"
+            f"\nprocess.py: UPRIGHT_KP() keypoint list length != 21 (len: {len(keypoints)})\n"
         )
 
     # Convert keypoints to numpy array
@@ -132,7 +136,7 @@ def upright_KP(keypoints: list[tuple[float, float]]) -> list[list[float]]:
     rotated[np.abs(rotated) < 1e-6] = 0.0
 
     # Debug print of rotated keypoints
-    print(rotated.tolist())
+    # print(rotated.tolist())
 
     # Return rotated keypoints as list of [x, y]
     return rotated.tolist()
@@ -143,36 +147,39 @@ def normalize_scale_KP(keypoints: list[tuple[float, float]]) -> list[list[float]
     # Type check input container
     if not isinstance(keypoints, list):
         raise TypeError(
-            f"process.py: NORMALIZE_SCALE_KP() type not taken {type(keypoints)}"
+            f"\nprocess.py: NORMALIZE_SCALE_KP() type not taken {type(keypoints)}\n"
         )
 
     # Ensure we have 21 keypoints
     if len(keypoints) != 21:
         raise IndexError(
-            f"process.py: NORMALIZE_SCALE_KP() keypoint list length != 21 (len: {len(keypoints)})"
+            f"\nprocess.py: NORMALIZE_SCALE_KP() keypoint list length != 21 (len: {len(keypoints)})\n"
         )
 
     # Convert keypoints to numpy array
     np_keypoints = np.array(keypoints, dtype=np.float32)  # (21, 2)
 
     # Wrist landmark (index 0)
-    wrist = np_keypoints[0, :]  # (2,)
+    wrist = np_keypoints[0]  # (2,)
 
     # Shift all points so wrist is at origin
     center_wrist_KP = np_keypoints - wrist  # (21, 2)
 
     # Distance from wrist to middle MCP (index 9)
-    dist = np.linalg.norm(center_wrist_KP[9, :])
+    dist = np.linalg.norm(center_wrist_KP[9])
+
+    print(dist)
 
     # Handle degenerate case where distance is too small
-    if dist < 1e-6:
+    if dist < 1e-4:
+        print('   \n BAD DIST!!!!!!!!')
         # Return sentinel large value for all points (shape 21x2)
         return [[999.0, 999.0] for _ in range(21)]
 
     # Scale all points so wrist→middle_MCP has unit length
     scaled_CW_KP = center_wrist_KP / dist  # (21, 2)
 
-    print(scaled_CW_KP.tolist())  # Debug
+    # print(scaled_CW_KP.tolist())  # Debug
 
     # Return scaled keypoints as list of [x, y]
     return scaled_CW_KP.tolist()

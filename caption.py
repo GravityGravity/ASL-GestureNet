@@ -133,7 +133,7 @@ def set_title(label: str) -> tuple[int, int, int]:
     """Set the global title based on label and return a BGR color."""
     global title
 
-    print(label)
+    # print(label)
     label = label.lower()
 
     match label:

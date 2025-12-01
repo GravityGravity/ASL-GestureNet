@@ -11,6 +11,7 @@ import mediapipe as mp
 
 from caption import write_cap, write_title, box_pad, check_OOB, clear_cap
 from process import frame_process
+from testset_ann import append_testdata
 
 
 def main() -> None:
@@ -48,7 +49,7 @@ def main() -> None:
 
                 for lm in hand_landmarks.landmark:
                     # normalized (x, y) from MediaPipe
-                    cords = (lm.x, lm.y)
+                    cords = [lm.x, lm.y]
                     hand_coords.append(cords)
 
                     # convert to pixel coords (avoid -1 index)
@@ -102,15 +103,15 @@ def main() -> None:
 
         # draw bottom caption on the frame
         frame = write_cap(frame, W, H)
-        cv.imshow("Live Video Feed", frame)
+        cv.imshow("Live Demo Feed", frame)
 
-        key = cv.waitKey(10) & 0xFF
+        key = cv.waitKey(25) & 0xFF
 
         # clear caption
         if key == ord("x"):
             clear_cap()
 
-        # test changing ASL char label
+        # debug test changing ASL char label
         if key == ord("a"):
             asl_char = "a"
         if key == ord("b"):
@@ -122,9 +123,10 @@ def main() -> None:
         if key == ord("e"):
             asl_char = "e"
 
-        # record a frame
+        # record a frames keypoint data
         if key == ord("r"):
-            cv.imwrite("frame_capture.jpg", frame)  # simple frame capture
+            append_testdata(hand_coords)
+            cv.waitKey(0)
 
         # quit
         if key == ord("q"):
