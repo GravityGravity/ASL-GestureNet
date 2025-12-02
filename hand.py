@@ -30,6 +30,7 @@ record_switch: bool = False
 def main() -> None:
     """Run live webcam hand tracking loop."""
     global record_switch
+    kp_loop_count = 0
     cap = cv.VideoCapture(0)
 
     if not cap.isOpened():
@@ -150,6 +151,7 @@ def main() -> None:
         if key == ord("r") or key == ord("R"):
             if not record_switch:
                 record_switch = True
+                kp_loop_count = 0
                 print('     \'R\' pressed -> FRAME RECORDING BUTTON ENABLED')
                 data_csv_name: str = input(
                     '    > Provide name of csv you want to add to or create\n        >')
@@ -169,8 +171,14 @@ def main() -> None:
             if key == ord(' '):
                 if hand_coords:
                     append_testdata(hand_coords)
+                    kp_loop_count += 1
 
             if key == ord('f') or key == ord('F'):
+                kp_loop_count = 0
+                change_char()
+
+            if kp_loop_count > 25:
+                kp_loop_count = 0
                 change_char()
 
         # quit
