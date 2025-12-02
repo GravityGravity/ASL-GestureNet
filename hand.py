@@ -12,6 +12,7 @@ import mediapipe as mp
 from caption import write_cap, write_title, box_pad, check_OOB, clear_cap
 from process import frame_process
 from testset_ann import append_testdata
+from key_points_predictor import predict_asl
 
 
 def main() -> None:
@@ -100,6 +101,11 @@ def main() -> None:
 
             # draw title and hand bbox label
             frame = write_title(frame, hand_bbox_min, hand_bbox_max, asl_char)
+
+        # write the predicted label to the title
+        if hand_coords:
+            predicted_label = predict_asl(hand_coords)
+            frame = write_title(frame, hand_bbox_min, hand_bbox_max, predicted_label)
 
         # draw bottom caption on the frame
         frame = write_cap(frame, W, H)

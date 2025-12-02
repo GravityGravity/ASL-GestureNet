@@ -41,7 +41,7 @@ labels = list("abcdefghijklmnopqrstuvwxyz0123456789")
 le = LabelEncoder()
 le.fit(labels)
 
-def predict_asl(keypoints_input, confidence_threshold=0.7):
+def predict_asl(keypoints_input, confidence_threshold=0.1):
     if isinstance(keypoints_input, str):
         keypoints = ast.literal_eval(keypoints_input)
     else:
