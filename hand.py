@@ -163,6 +163,8 @@ def main() -> None:
             if key == ord('a'):
                 caption_auto = not caption_auto
                 print(f"CURRENT CAPTION MODE: {'AUTO' if caption_auto else 'MANUAL'}")
+                if caption_auto: print("CAPTION WILL BE UPDATED EVERY SECOND\nAFTER 3 SECONDS OF NO HAND DETECTION THE CAPTION WILL SAVE AND CLEAR")
+                else: print("PRESS [SPACE] TO APPEND THE CURRENT LETTER (SPACE IF NONE) AND [ENTER] TO SAVE AND CLEAR THE CURRENT CAPTION")
 
             if caption_auto == True:
 
@@ -197,6 +199,23 @@ def main() -> None:
                 
                 countdown_timer += 1
 
+            else:
+                if hand_coords:
+                    current_letter = smoothed_label
+                else:
+                    current_letter = " "
+
+                if key == ord(' '):
+                    append_cap(current_letter)
+                
+                write_cap(frame, W, H)
+
+                if key == 13:
+                    print("SAVING CURRENT CAPTION TO /captions")
+                    save_cap_to_file()
+                    clear_cap()
+                    last_letter = None
+
         # draw bottom caption on the frame
         frame = write_cap(frame, W, H)
         cv.imshow("Live Demo Feed", frame)
@@ -209,8 +228,12 @@ def main() -> None:
 
         # toggle caption mode
         if key == ord('v') or key == ord('V'):
+            clear_cap()
             caption_mode = not caption_mode
-            print(f"CAPTION MODE {'ENABLED' if caption_mode else 'DISABLED'}\nCURRENT TYPE: MANUAL\nTO TOGGLE AUTO-CAPTION PRESS [A]")
+            print(f"CAPTION MODE {'ENABLED' if caption_mode else 'DISABLED'}")
+            if caption_mode: print("CURRENT TYPE: MANUAL\nTO TOGGLE AUTO-CAPTION PRESS [A]")
+            if caption_auto: print("CAPTION WILL BE UPDATED EVERY SECOND\nAFTER 3 SECONDS OF NO HAND DETECTION THE CAPTION WILL SAVE AND CLEAR")
+            else: print("PRESS [SPACE] TO APPEND THE CURRENT LETTER (SPACE IF NONE) AND [ENTER] TO SAVE AND CLEAR THE CURRENT CAPTION")
             countdown_timer = 0
             last_letter = None
 
