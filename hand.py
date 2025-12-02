@@ -17,7 +17,6 @@
 
 from cnn_predictor import predict_asl_cnn
 from mlp_predictor import predict_asl_mlp
-from testset_ann import append_testdata
 from key_points_predictor import predict_asl
 from set_create import append_testdata, change_char, csv_startup, close_csv
 import cv2 as cv
