@@ -168,8 +168,6 @@ def normalize_scale_KP(keypoints: list[tuple[float, float]]) -> list[list[float]
     # Distance from wrist to middle MCP (index 9)
     dist = np.linalg.norm(center_wrist_KP[9])
 
-    print(dist)
-
     # Handle degenerate case where distance is too small
     if dist < 1e-4:
         print('   \n BAD DIST!!!!!!!!')

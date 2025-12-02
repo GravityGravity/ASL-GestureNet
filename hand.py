@@ -6,17 +6,29 @@
 #   updates on-screen caption/title.
 #
 
+
+# HOTKEYS:
+#   [R]  -> Enable frame recording mode (prompts for CSV file name)
+#   [C]  -> Disable frame recording mode and save CSV to disk
+#   [SPACE] -> Capture and record a single frame's keypoint data (when recording is enabled)
+#   [F]  -> Change the active character label for recorded samples (when recording is enabled)
+#   [X]  -> Clear the on-screen caption
+#   [Q]  -> Quit the program (auto-saves CSV if recording is active)
+
 import cv2 as cv
 import mediapipe as mp
 
 from caption import write_cap, write_title, box_pad, check_OOB, clear_cap
 from process import frame_process
-from testset_ann import append_testdata
+from set_create import append_testdata, change_char, csv_startup, close_csv
 from key_points_predictor import predict_asl
+
+record_switch: bool = False
 
 
 def main() -> None:
     """Run live webcam hand tracking loop."""
+    global record_switch
     cap = cv.VideoCapture(0)
 
     if not cap.isOpened():
@@ -105,7 +117,8 @@ def main() -> None:
         # write the predicted label to the title
         if hand_coords:
             predicted_label = predict_asl(hand_coords)
-            frame = write_title(frame, hand_bbox_min, hand_bbox_max, predicted_label)
+            frame = write_title(frame, hand_bbox_min,
+                                hand_bbox_max, predicted_label)
 
         # draw bottom caption on the frame
         frame = write_cap(frame, W, H)
@@ -117,25 +130,41 @@ def main() -> None:
         if key == ord("x"):
             clear_cap()
 
-        # debug test changing ASL char label
-        if key == ord("a"):
-            asl_char = "a"
-        if key == ord("b"):
-            asl_char = "b"
-        if key == ord("c"):
-            asl_char = "c"
-        if key == ord("d"):
-            asl_char = "d"
-        if key == ord("e"):
-            asl_char = "e"
+        # Enable frame recording hotkeys
+        if key == ord("r") or key == ord("R"):
+            if not record_switch:
+                record_switch = True
+                print('     \'R\' pressed -> FRAME RECORDING BUTTON ENABLED')
+                data_csv_name: str = input(
+                    '    > Provide name of csv you want to add to or create\n        >')
+                csv_startup(data_csv_name)
+            else:
+                print('     \'R\' -> FRAME RECORDING BUTTON ALREADY ENABLED')
 
-        # record a frames keypoint data
-        if key == ord("r"):
-            append_testdata(hand_coords)
-            cv.waitKey(0)
+        # Disable frame recording hotkeys
+        if key == ord("c") or key == ord("C"):
+            record_switch = False
+            close_csv()
+            print('     \'C\' -> FRAME RECORDING BUTTON DISABLED\n'
+                  '                     SAVED CSV TO FILE :) ')
+
+        # Hotkey to record a single frame's keypoint data
+        if record_switch:
+            if key == ord(' '):
+                if hand_coords:
+                    append_testdata(hand_coords)
+
+            if key == ord('f') or key == ord('F'):
+                change_char()
 
         # quit
-        if key == ord("q"):
+        if key == ord("q") or key == ord("q"):
+            if record_switch:
+                close_csv()
+                print('     ...\'Q\' -> SAVED CSV FILE\n'
+                      '                     EXITING PROGRAM ... ')
+                break
+            print('     ...\'Q\' -> EXITING PROGRAM ... ')
             break
 
     cap.release()

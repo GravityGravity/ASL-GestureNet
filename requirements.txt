@@ -4,3 +4,5 @@ torch
 torchvision
 pandas
 mediapipe
+colorama
+scikit-learn
