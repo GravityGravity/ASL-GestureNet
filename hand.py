@@ -15,14 +15,16 @@
 #   [X]  -> Clear the on-screen caption
 #   [Q]  -> Quit the program (auto-saves CSV if recording is active)
 
+from cnn_predictor import predict_asl_cnn
+from mlp_predictor import predict_asl_mlp
+from testset_ann import append_testdata
+from key_points_predictor import predict_asl
+from set_create import append_testdata, change_char, csv_startup, close_csv
 import cv2 as cv
 import mediapipe as mp
 
 from caption import write_cap, write_title, box_pad, check_OOB, clear_cap
 from process import frame_process
-from set_create import append_testdata, change_char, csv_startup, close_csv
-from key_points_predictor import predict_asl
-
 record_switch: bool = False
 
 
@@ -40,6 +42,13 @@ def main() -> None:
     hand = mp_hands.Hands(max_num_hands=1)  # single hand tracking
 
     asl_char = "?"
+
+    # await model type selection
+    model_type = None
+    while model_type not in ("1", "2"):
+        model_type = input(
+            "What model would you like to use (MLP - 1, CNN - 2): ")
+    model_type = int(model_type)
 
     while cap.isOpened():
         success, frame = cap.read()
@@ -114,11 +123,19 @@ def main() -> None:
             # draw title and hand bbox label
             frame = write_title(frame, hand_bbox_min, hand_bbox_max, asl_char)
 
-        # write the predicted label to the title
+        # handle model type switching
         if hand_coords:
-            predicted_label = predict_asl(hand_coords)
-            frame = write_title(frame, hand_bbox_min,
-                                hand_bbox_max, predicted_label)
+            if (model_type == 1):
+                # write the predicted label to the title for MLP
+                predicted_label = predict_asl_mlp(hand_coords)
+                frame = write_title(frame, hand_bbox_min,
+                                    hand_bbox_max, predicted_label)
+            elif (model_type == 2):
+                predicted_label = predict_asl_cnn(hand_coords)
+                frame = write_title(frame, hand_bbox_min,
+                                    hand_bbox_max, predicted_label)
+            else:
+                return
 
         # draw bottom caption on the frame
         frame = write_cap(frame, W, H)
