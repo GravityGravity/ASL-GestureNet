@@ -8,9 +8,11 @@
 
 import cv2 as cv
 import numpy as np
+import os
+import time
 
 # Text that appears at the bottom of the video
-caption: list[str] = ["CAPTION", "TEST"]
+caption: list[str] = ["CAPTION TEST"]
 
 # Text that appears above the hand
 title: str = "HAND TEST"
@@ -70,7 +72,7 @@ def append_cap(s: str) -> bool:
 def concate_caption() -> str:
     """Concatenate caption tokens into a single string."""
     global caption
-    return " ".join(s for s in caption)
+    return "".join(s for s in caption)
 
 
 def clear_cap() -> bool:
@@ -79,6 +81,11 @@ def clear_cap() -> bool:
     caption.clear()
     return True
 
+def save_cap_to_file():
+    os.makedirs("captions", exist_ok=True)
+    filename = f"captions/caption_{int(time.time())}.txt"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(concate_caption())
 
 def write_title(
     img: np.ndarray,
