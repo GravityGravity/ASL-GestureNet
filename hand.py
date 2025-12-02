@@ -178,6 +178,7 @@ def main() -> None:
                 change_char()
 
             if kp_loop_count > 25:
+                print('    \n==25 DATA POINTS CREATED FOR CLASS, INPUT NEXT_CHAR==\n')
                 kp_loop_count = 0
                 change_char()
 
