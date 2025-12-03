@@ -8,6 +8,8 @@
 
 import cv2 as cv
 import numpy as np
+import os
+import time
 
 # Text that appears at the bottom of the video
 caption: list[str] = ["CAPTION", " ", "TEST"]
@@ -78,6 +80,13 @@ def clear_cap() -> bool:
     global caption
     caption.clear()
     return True
+
+
+def save_cap_to_file():
+    os.makedirs("captions", exist_ok=True)
+    filename = f"captions/caption_{int(time.time())}.txt"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(concate_caption())
 
 
 def write_title(

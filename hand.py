@@ -15,21 +15,38 @@
 #   [X]  -> Clear the on-screen caption
 #   [Q]  -> Quit the program (auto-saves CSV if recording is active)
 
-from cnn_predictor import predict_asl_cnn
-from mlp_predictor import predict_asl_mlp
-from key_points_predictor import predict_asl
-from set_create import append_testdata, change_char, csv_startup, close_csv
-import cv2 as cv
-import mediapipe as mp
-
-from caption import write_cap, write_title, box_pad, check_OOB, clear_cap, append_cap
 from process import frame_process
+from caption import write_cap, write_title, box_pad, check_OOB, clear_cap, append_cap, save_cap_to_file
+from caption import write_cap, write_title, box_pad, check_OOB, clear_cap, append_cap
+import statistics
+from collections import deque
+import mediapipe as mp
+import cv2 as cv
+from set_create import append_testdata, change_char, csv_startup, close_csv
+from mlp_predictor import predict_asl_mlp
+from cnn_predictor import predict_asl_cnn
+import os
+import warnings
+import absl.logging
+warnings.filterwarnings(
+    "ignore", message="SymbolDatabase.GetPrototype()", category=UserWarning)
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
+absl.logging.set_verbosity(absl.logging.ERROR)
+
+
+<< << << < HEAD
+== == == =
+>>>>>> > 60b3586a365b016bbf765940d0e7ed8cfc15141e
 record_switch: bool = False
 
 
 def main() -> None:
     """Run live webcam hand tracking loop."""
     global record_switch
+
+    pred_buffer = deque(maxlen=5)
+
     kp_loop_count = 0
     cap = cv.VideoCapture(0)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
@@ -44,6 +61,16 @@ def main() -> None:
     hand = mp_hands.Hands(max_num_hands=1)  # single hand tracking
 
     asl_char = "?"
+
+    caption_mode = False
+    caption_auto = False
+    caption_text = ""
+    add_letter_time = 30
+    countdown_timer = 0
+    last_letter = None
+    last_added = None
+    clear_caption_time = 100
+    space_counter = 0
 
     # await model type selection
     model_type = None
@@ -125,19 +152,86 @@ def main() -> None:
             # draw title and hand bbox label
             frame = write_title(frame, hand_bbox_min, hand_bbox_max, asl_char)
 
-        # handle model type switching
+        # if a hand is currently being detected
         if hand_coords:
+            # handle model type switching
             if (model_type == 1):
-                # write the predicted label to the title for MLP
                 predicted_label = predict_asl_mlp(hand_coords)
-                frame = write_title(frame, hand_bbox_min,
-                                    hand_bbox_max, predicted_label)
-            elif (model_type == 2):
-                predicted_label = predict_asl_cnn(hand_coords)
-                frame = write_title(frame, hand_bbox_min,
-                                    hand_bbox_max, predicted_label)
             else:
-                return
+                predicted_label = predict_asl_cnn(hand_coords)
+
+            pred_buffer.append(predicted_label)
+
+            # smooth out the inputs and write to title
+            try:
+                smoothed_label = statistics.mode(pred_buffer)
+            except statistics.StatisticsError:
+                smoothed_label = predicted_label
+
+            frame = write_title(frame, hand_bbox_min,
+                                hand_bbox_max, smoothed_label)
+
+        if caption_mode:
+            if key == ord('a'):
+                caption_auto = not caption_auto
+                print(
+                    f"CURRENT CAPTION MODE: {'AUTO' if caption_auto else 'MANUAL'}")
+                if caption_auto:
+                    print(
+                        "CAPTION WILL BE UPDATED EVERY SECOND\nAFTER 3 SECONDS OF NO HAND DETECTION THE CAPTION WILL SAVE AND CLEAR")
+                else:
+                    print(
+                        "PRESS [SPACE] TO APPEND THE CURRENT LETTER (SPACE IF NONE) AND [ENTER] TO SAVE AND CLEAR THE CURRENT CAPTION")
+
+            if caption_auto == True:
+
+                if hand_coords:
+                    current_letter = smoothed_label
+                else:
+                    current_letter = " "
+
+                # print(countdown_timer, "   ", current_letter, "   ", last_letter)
+
+                if current_letter == " " and last_letter is None:
+                    last_letter = None
+                    countdown_timer = 0
+                elif current_letter != last_letter:
+                    last_letter = current_letter
+                    countdown_timer = 0
+
+                if current_letter == last_letter and countdown_timer >= add_letter_time:
+                    if current_letter != last_added:
+                        if not (current_letter == last_added == ' '):
+                            append_cap(current_letter)
+                            last_added = current_letter
+                        write_cap(frame, W, H)
+                        last_letter = current_letter
+
+                if last_letter == current_letter == ' ' and countdown_timer >= clear_caption_time:
+                    print("SAVING CURRENT CAPTION TO /captions")
+                    save_cap_to_file()
+                    clear_cap()
+                    last_letter = None
+                    countdown_timer = 0
+
+                countdown_timer += 1
+
+            else:
+                if hand_coords:
+                    current_letter = smoothed_label
+                else:
+                    current_letter = " "
+
+                if key == ord(' '):
+                    append_cap(current_letter)
+
+                write_cap(frame, W, H)
+
+                if key == 13:
+                    print("SAVING CURRENT CAPTION TO /captions")
+                    save_cap_to_file()
+                    clear_cap()
+                    last_letter = None
 
         # draw bottom caption on the frame
         frame = write_cap(frame, W, H)
@@ -145,21 +239,36 @@ def main() -> None:
 
         key = cv.waitKey(25) & 0xFF
 
-        # =========CAPTION CONTROLS============
-        # Append to Caption
-        if key == ord('\r'):
-            append_cap(predicted_label)
+        # # =========CAPTION CONTROLS============
+        # # Append to Caption
+        # if key == ord('\r'):
+        #     append_cap(predicted_label)
 
-        # Append Space in Caption
-        if not record_switch:
-            if key == ord(' '):
-                append_cap(' ')
+        # # Append Space in Caption
+        # if not record_switch:
+        #     if key == ord(' '):
+        #         append_cap(' ')
 
         # clear caption
         if key == ord("x"):
             clear_cap()
 
-        # =============RECORDING CONTROLS================
+        # toggle caption mode
+        if key == ord('v') or key == ord('V'):
+            clear_cap()
+            caption_mode = not caption_mode
+            print(f"CAPTION MODE {'ENABLED' if caption_mode else 'DISABLED'}")
+            if caption_mode:
+                print("CURRENT TYPE: MANUAL\nTO TOGGLE AUTO-CAPTION PRESS [A]")
+            if caption_auto:
+                print(
+                    "CAPTION WILL BE UPDATED EVERY SECOND\nAFTER 3 SECONDS OF NO HAND DETECTION THE CAPTION WILL SAVE AND CLEAR")
+            else:
+                print(
+                    "PRESS [SPACE] TO APPEND THE CURRENT LETTER (SPACE IF NONE) AND [ENTER] TO SAVE AND CLEAR THE CURRENT CAPTION")
+            countdown_timer = 0
+            last_letter = None
+
         # Enable frame recording hotkeys
         if key == ord("r") or key == ord("R"):
             if not record_switch:
@@ -173,7 +282,7 @@ def main() -> None:
                 print('     \'R\' -> FRAME RECORDING BUTTON ALREADY ENABLED')
 
         # Disable frame recording hotkeys
-        if key == ord("c") or key == ord("C"):
+        if (record_switch and (key == ord("c") or key == ord("C"))):
             record_switch = False
             close_csv()
             print('     \'C\' -> FRAME RECORDING BUTTON DISABLED\n'
