@@ -34,10 +34,6 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 absl.logging.set_verbosity(absl.logging.ERROR)
 
-
-<< << << < HEAD
-== == == =
->>>>>> > 60b3586a365b016bbf765940d0e7ed8cfc15141e
 record_switch: bool = False
 
 
