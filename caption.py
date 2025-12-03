@@ -10,7 +10,7 @@ import cv2 as cv
 import numpy as np
 
 # Text that appears at the bottom of the video
-caption: list[str] = ["CAPTION", "TEST"]
+caption: list[str] = ["CAPTION", " ", "TEST"]
 
 # Text that appears above the hand
 title: str = "HAND TEST"
@@ -70,7 +70,7 @@ def append_cap(s: str) -> bool:
 def concate_caption() -> str:
     """Concatenate caption tokens into a single string."""
     global caption
-    return " ".join(s for s in caption)
+    return "".join(s for s in caption)
 
 
 def clear_cap() -> bool:

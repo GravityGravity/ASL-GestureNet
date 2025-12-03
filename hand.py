@@ -22,7 +22,7 @@ from set_create import append_testdata, change_char, csv_startup, close_csv
 import cv2 as cv
 import mediapipe as mp
 
-from caption import write_cap, write_title, box_pad, check_OOB, clear_cap
+from caption import write_cap, write_title, box_pad, check_OOB, clear_cap, append_cap
 from process import frame_process
 record_switch: bool = False
 
@@ -32,9 +32,11 @@ def main() -> None:
     global record_switch
     kp_loop_count = 0
     cap = cv.VideoCapture(0)
+    cap.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
 
     if not cap.isOpened():
-        print("Error: Could not open video stream or file")
+        print("     !!!Error: Could not open video stream or file")
         return
 
     mp_drawing = mp.solutions.drawing_utils
@@ -143,10 +145,21 @@ def main() -> None:
 
         key = cv.waitKey(25) & 0xFF
 
+        # =========CAPTION CONTROLS============
+        # Append to Caption
+        if key == ord('\r'):
+            append_cap(predicted_label)
+
+        # Append Space in Caption
+        if not record_switch:
+            if key == ord(' '):
+                append_cap(' ')
+
         # clear caption
         if key == ord("x"):
             clear_cap()
 
+        # =============RECORDING CONTROLS================
         # Enable frame recording hotkeys
         if key == ord("r") or key == ord("R"):
             if not record_switch:
@@ -182,7 +195,7 @@ def main() -> None:
                 kp_loop_count = 0
                 change_char()
 
-        # quit
+        # ============QUIT PROGRAM==============
         if key == ord("q") or key == ord("q"):
             if record_switch:
                 close_csv()
