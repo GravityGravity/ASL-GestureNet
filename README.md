@@ -1,3 +1,10 @@
+<!-- Author Images Row -->
+<p align="center">
+  <img src="figures/alice.jpg" width="200"/>
+  <img src="figures/bob.jpg" width="200"/>
+  <img src="figures/charlie.jpg" width="200"/>
+</p>
+
 <p align="center">
   <img src="\figures\banner.jpg" alt="ASL-GestureNet Banner">
 </p>
@@ -15,6 +22,8 @@
 - [mcalvelo28](https://github.com/mcalvelo28)
 
 ---
+
+
 
 ##  Features
 - **Real-time webcam hand tracking** using MediaPipe  
