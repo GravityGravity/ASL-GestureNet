@@ -5,10 +5,9 @@
 # ✋ ASL-GestureNet
 
 
-## 📌 Project Overview (Quick Glance)
+##  Project Overview 
 
-**ASL-GestureNet** is a real-time American Sign Language recognition system that reads **21-point hand keypoints** from a webcam and classifies them into ASL letters.  
-It runs live on video, predicts gestures frame-by-frame, and shows the recognized character as an on-screen caption.
+**ASL-GestureNet** is a real-time American Sign Language recognition system that reads **21-point hand keypoints** from a webcam and classifies them into ASL letters.  It runs live on video, predicts gestures frame-by-frame, and shows the recognized character as an on-screen caption.
 
 ###### **Authors**
 - [GravityGravity](https://github.com/GravityGravity)
@@ -17,7 +16,7 @@ It runs live on video, predicts gestures frame-by-frame, and shows the recognize
 
 ---
 
-## ⭐ Features
+##  Features
 - **Real-time webcam hand tracking** using MediaPipe  
 - **Keypoint-driven gesture classification** powered by a custom neural network  
 - **Live on-screen captions** that update instantly with each prediction  
