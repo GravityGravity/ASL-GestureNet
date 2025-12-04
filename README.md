@@ -4,7 +4,7 @@
 
 # ✋ ASL-GestureNet
 
-### **Authors**
+##### **Authors**
 - [GravityGravity](https://github.com/GravityGravity)
 - [Howzley](https://github.com/Howzley)
 - [mcalvelo28](https://github.com/mcalvelo28)
