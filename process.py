@@ -71,14 +71,11 @@ def frame_process(
     # Rotate keypoints so middle MCP is vertical
     kp_new_list = upright_KP(kp_new_list)
 
-    # print(kp_new_list)  # debug
-
     # Optionally display the hand crop
     if display_hand_seg:
         if not is_left:
             img = hand_invert(img)  # horizontally flip the image
 
-        # print((y_min, y_max, x_min, x_max)) # Debug
         img = img[y_min:y_max + 1, x_min:x_max + 1]  # crop image
         cv.imshow("hand_segment", img)
 
@@ -135,9 +132,6 @@ def upright_KP(keypoints: list[tuple[float, float]]) -> list[list[float]]:
     # Zero-out tiny numerical noise
     rotated[np.abs(rotated) < 1e-6] = 0.0
 
-    # Debug print of rotated keypoints
-    # print(rotated.tolist())
-
     # Return rotated keypoints as list of [x, y]
     return rotated.tolist()
 
@@ -176,8 +170,6 @@ def normalize_scale_KP(keypoints: list[tuple[float, float]]) -> list[list[float]
 
     # Scale all points so wrist→middle_MCP has unit length
     scaled_CW_KP = center_wrist_KP / dist  # (21, 2)
-
-    # print(scaled_CW_KP.tolist())  # Debug
 
     # Return scaled keypoints as list of [x, y]
     return scaled_CW_KP.tolist()
