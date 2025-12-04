@@ -1,19 +1,28 @@
 # FILE: hand.py
 #
 # DESC:
-#   Live hand-tracking using MediaPipe Hands. Captures webcam frames,
-#   detects a single hand, draws landmarks and bounding boxes, and
-#   updates on-screen caption/title.
+#   Live ASL hand-tracking demo using MediaPipe Hands + MLP/CNN models.
+#   Captures webcam frames, detects one hand, draws landmarks/bounding boxes,
+#   predicts ASL characters, supports auto/manual caption generation, and
+#   records labeled keypoint samples to CSV files.
 #
-
-
 # HOTKEYS:
-#   [R]  -> Enable frame recording mode (prompts for CSV file name)
-#   [C]  -> Disable frame recording mode and save CSV to disk
-#   [SPACE] -> Capture and record a single frame's keypoint data (when recording is enabled)
-#   [F]  -> Change the active character label for recorded samples (when recording is enabled)
-#   [X]  -> Clear the on-screen caption
-#   [Q]  -> Quit the program (auto-saves CSV if recording is active)
+#   General:
+#       [Q]        Quit program (auto-saves CSV if recording is active)
+#       [X]        Clear on-screen caption
+#       [V]        Toggle caption mode ON/OFF
+#       [A]        Toggle AUTO / MANUAL caption type (caption mode only)
+#
+#   Caption Mode:
+#       [SPACE]    MANUAL mode → append current letter (or space)
+#       [ENTER]    Save caption to file + clear current caption
+#
+#   Recording Mode:
+#       [R]        Start recording (prompt for CSV name)
+#       [C]        Stop recording and save CSV
+#       [SPACE]    Save current frame’s keypoints (when recording)
+#       [F]        Change active label/class for recording
+
 
 from process import frame_process
 from caption import write_cap, write_title, box_pad, check_OOB, clear_cap, append_cap, save_cap_to_file
@@ -236,14 +245,14 @@ def main() -> None:
         key = cv.waitKey(25) & 0xFF
 
         # # =========CAPTION CONTROLS============
-        # # Append to Caption
-        # if key == ord('\r'):
-        #     append_cap(predicted_label)
+        # Append to Caption
+        if key == ord('\r'):
+            append_cap(predicted_label)
 
-        # # Append Space in Caption
-        # if not record_switch:
-        #     if key == ord(' '):
-        #         append_cap(' ')
+        # Append Space in Caption
+        if not record_switch:
+            if key == ord(' '):
+                append_cap(' ')
 
         # clear caption
         if key == ord("x"):
