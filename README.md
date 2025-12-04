@@ -4,46 +4,55 @@
 
 # ✋ ASL-GestureNet
 
-**ASL-GestureNet** is a real-time American Sign Language (ASL) recognition system that uses **hand keypoints** to classify static hand gestures from webcam video. The project extracts 2D hand landmarks, feeds them into a trained neural network classifier, and displays the recognized letter or gesture as an on-screen caption. When no hands are detected, the caption is cleared and automatically logged to a text file.
+### **Authors**
+- [GravityGravity](https://github.com/GravityGravity)
+- [Howzley](https://github.com/Howzley)
+- [mcalvelo28](https://github.com/mcalvelo28)
 
 ---
 
-## Project Goals
+## 📌 Project Overview (Quick Glance)
 
+**ASL-GestureNet** is a real-time American Sign Language recognition system that reads **21-point hand keypoints** from a webcam and classifies them into ASL letters.  
+It runs live on video, predicts gestures frame-by-frame, and shows the recognized character as an on-screen caption.
+
+---
+
+## ⭐ Features
+- **Real-time webcam hand tracking** using MediaPipe  
+- **Keypoint-driven gesture classification** powered by a custom neural network  
+- **Live on-screen captions** that update instantly with each prediction  
+- **Automatic transcript logging** whenever the hand leaves the frame  
+- **Built-in dataset recording tool** for capturing and labeling ASL poses  
+- **Modular training + inference pipeline**, easy to extend and experiment with  
+
+---
+
+## 🎯 Project Goals (Detailed)
 ### **1. Create a Custom ASL Hand Pose Dataset**
-- Capture live webcam frames of ASL hand positions.
-- Extract 2D hand keypoints (e.g., 21-point landmarks).
-- Build a labeled dataset of ASL letters or words for training.
+- Capture ASL hand images directly from a webcam.  
+- Extract and store 2D keypoints for each gesture.  
+- Build a labeled dataset suitable for training the model.
 
 ### **2. Train a Gesture Classification Model**
-- Use keypoint vectors as input to a neural network classifier.
-- Support real-time inference.
-- Evaluate accuracy with confusion matrices and per-class metrics.
+- Use normalized hand-landmark vectors as input.  
+- Train a fast classifier for static ASL letters.  
+- Evaluate with confusion matrices and per-class metrics.
 
-### **3. Build a Real-Time ASL Recognition Pipeline**
-- Detect a hand in webcam frames.
-- Extract keypoints per frame.
-- Predict gestures instantaneously.
-- Display the predicted gesture as a caption on the video feed.
+### **3. Build a Real-Time Recognition Pipeline**
+- Detect one hand per frame.  
+- Extract keypoints, run inference, and show the prediction.  
+- Update the caption continuously as gestures change.
 
 ### **4. Implement Caption Logging**
-- If no hand is detected for a short time, clear the on-screen caption.
-- Save the previously recognized sequence to a `.txt` log file.
-- Create a simple transcript of gestures detected during the session.
+- Clear the caption when no hand is detected.  
+- Save the previous sequence to a text file.  
+- Produce a simple session transcript.
 
-### **5. Deliver a Demonstrable, High-Usability System**
-- Smooth real-time performance.
-- Clean, readable UI with live captions.
-- Simple controls for starting/stopping the demo.
-- Modular code for dataset creation, training, and inference.
+### **5. Deliver a Smooth, Usable System**
+- Low-latency performance.  
+- Clean UI with readable captions.  
+- Easy to run demos and experiments.  
+- Organized modules for dataset creation, training, and inference.
 
 ---
-
-## Features (High-Level)
-- Real-time webcam hand tracking  
-- Keypoint-based ASL gesture classification  
-- Dynamic on-screen captions  
-- Automatic transcript logging  
-- Custom dataset recording tool  
-- Modular training scripts  
-
