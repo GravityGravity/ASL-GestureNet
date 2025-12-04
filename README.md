@@ -20,46 +20,23 @@
 
 ---
 
+## Model Development & Results
+
+As a team of three, we created our own ASL keypoint dataset by capturing thousands of labeled hand poses using our custom recording tool. We experimented with two model architectures: a 1D **Convolutional Neural Network (CNN)** and a simpler **Multilayer Perceptron (MLP)**.
+
+The CNN quickly learned the training set but showed clear signs of **overfitting**, struggling to generalize to new samples. In contrast, the MLP handled our keypoint-based inputs far better. With proper normalization and training, it achieved **~95% test accuracy** without overfitting.
+
+One remaining challenge is the gestures for **“0” and “O”**, which are visually identical in static ASL. Because both signs share the same hand shape, the model (and even humans) cannot reliably distinguish them from keypoints alone. This ambiguity is expected and noted in our results.
 
 
-##  Features
-- **Real-time webcam hand tracking** using MediaPipe  
-- **Keypoint-driven gesture classification** powered by a custom neural network  
-- **Live on-screen captions** that update instantly with each prediction  
-- **Automatic transcript logging** whenever the hand leaves the frame  
-- **Built-in dataset recording tool** for capturing and labeling ASL poses  
-- **Modular training + inference pipeline**, easy to extend and experiment with  
+## Project Goals
 
----
-
-## 🎯 Project Goals (Detailed)
-### **1. Create a Custom ASL Hand Pose Dataset**
-- Capture ASL hand images directly from a webcam.  
-- Extract and store 2D keypoints for each gesture.  
-- Build a labeled dataset suitable for training the model.
-
-### **2. Train a Gesture Classification Model**
-- Use normalized hand-landmark vectors as input.  
-- Train a fast classifier for static ASL letters.  
-- Evaluate with confusion matrices and per-class metrics.
-
-### **3. Build a Real-Time Recognition Pipeline**
-- Detect one hand per frame.  
-- Extract keypoints, run inference, and show the prediction.  
-- Update the caption continuously as gestures change.
-
-### **4. Implement Caption Logging**
-- Clear the caption when no hand is detected.  
-- Save the previous sequence to a text file.  
-- Produce a simple session transcript.
-
-### **5. Deliver a Smooth, Usable System**
-- Low-latency performance.  
-- Clean UI with readable captions.  
-- Easy to run demos and experiments.  
-- Organized modules for dataset creation, training, and inference.
-
----
+- **Build a custom ASL dataset** using webcam-captured hand keypoints.
+- **Train a lightweight classifier** that predicts static ASL letters from 21-point landmarks.
+- **Run real-time gesture recognition** with smooth, low-latency performance.
+- **Display live captions** and automatically log recognized sequences.
+- **Provide modular tools** for data collection, training, and inference.
+- 
 <p align="center">
   <img src="\figures\banner.jpg" alt="ASL-GestureNet Banner">
 </p>
