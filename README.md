@@ -20,6 +20,37 @@
 
 ---
 
+## ▶️ How to Run ASL-GestureNet
+
+Run the system by executing:
+
+```bash
+python hand.py
+```
+
+Wait for startup to finish, then press **ENTER**. When prompted, type **1** to load the CNN or **2** to load the MLP, and press **ENTER** again. After the model loads, the webcam window will appear and hand tracking will begin automatically. The MLP is recommended, as it achieved ~95% accuracy without overfitting.
+
+You can control the system using the hotkeys below:
+
+**General Hotkeys**
+- **Q** — Quit program (auto-saves CSV if recording is active)  
+- **X** — Clear on-screen caption  
+- **V** — Toggle caption mode ON/OFF  
+- **A** — Toggle AUTO / MANUAL caption type  
+
+**Caption Mode**
+- **SPACE** — In MANUAL mode, append current letter (or space)  
+- **ENTER** — Save caption to file and clear it  
+
+**Recording Mode**
+- **R** — Start recording (prompt for CSV name)  
+- **C** — Stop recording and save CSV  
+- **SPACE** — Save current frame’s keypoints (when recording)  
+- **F** — Change active label/class for recording  
+
+Running `hand.py`, selecting a model, and using these hotkeys provides the full real-time ASL recognition workflow.
+
+
 ## Model Development & Results
 
 As a team of three, we created our own ASL keypoint dataset by capturing thousands of labeled hand poses using our custom recording tool. We experimented with two model architectures: a 1D **Convolutional Neural Network (CNN)** and a simpler **Multilayer Perceptron (MLP)**.
