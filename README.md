@@ -1,8 +1,9 @@
 <!-- Author Images Row -->
 <p align="center">
-  <img src="figures/alice.jpg" width="200"/>
-  <img src="figures/bob.jpg" width="200"/>
-  <img src="figures/charlie.jpg" width="200"/>
+  <img src="figures/fig1.jpg" width="200"/>
+  <img src="figures/fig2.png" width="200"/>
+  <img src="figures/fig3.jpg" width="200"/>
+  <img src="figures/fig4.png" width="200"/>
 </p>
 
 # ✋ ASL-GestureNet
