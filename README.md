@@ -67,7 +67,6 @@ One remaining challenge is the gestures for **“0” and “O”**, which are v
 - **Run real-time gesture recognition** with smooth, low-latency performance.
 - **Display live captions** and automatically log recognized sequences.
 - **Provide modular tools** for data collection, training, and inference.
-- 
 <p align="center">
   <img src="\figures\banner.jpg" alt="ASL-GestureNet Banner">
 </p>
