@@ -5,10 +5,6 @@
   <img src="figures/charlie.jpg" width="200"/>
 </p>
 
-<p align="center">
-  <img src="\figures\banner.jpg" alt="ASL-GestureNet Banner">
-</p>
-
 # ✋ ASL-GestureNet
 
 
@@ -63,3 +59,6 @@
 - Organized modules for dataset creation, training, and inference.
 
 ---
+<p align="center">
+  <img src="\figures\banner.jpg" alt="ASL-GestureNet Banner">
+</p>
